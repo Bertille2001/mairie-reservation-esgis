@@ -80,6 +80,7 @@ export function SalleDetailContent({
 
       {fromPlanning && slotRange && (
         <SalleSlotSummary
+          salleId={salle.id}
           slotRange={slotRange}
           estLibre={estLibreSurCreneau}
         />
@@ -130,8 +131,8 @@ export function SalleDetailContent({
           </p>
         ) : (
           <ul className="divide-y divide-border/50">
-            {salle.appareils_fixes.map((nom) => (
-              <li key={nom} className="px-5 py-3.5 text-sm text-foreground">
+            {salle.appareils_fixes.map((nom, index) => (
+              <li key={`${index}-${nom}`} className="px-5 py-3.5 text-sm text-foreground">
                 {nom}
               </li>
             ))}

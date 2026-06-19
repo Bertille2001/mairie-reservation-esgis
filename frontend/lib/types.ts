@@ -30,6 +30,18 @@ export interface SallePlanning {
   id: number;
   nom: string;
   est_libre: boolean;
+  adresse: string;
+  surface_m2: number | string;
+  capacite_min: number;
+  capacite_max: number;
+  est_payante: boolean;
+  a_gardien: boolean;
+}
+
+export interface SalleDisponibilite {
+  id: number;
+  nom: string;
+  est_libre: boolean;
 }
 
 export type TypeDemandeur = "particulier" | "organisation";

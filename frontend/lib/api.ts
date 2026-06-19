@@ -3,6 +3,7 @@ import type {
   DemandeCreatePayload,
   DemandeReservation,
   SalleDetail,
+  SalleDisponibilite,
   SallePlanning,
 } from "./types";
 import { rangeToApiParams } from "./dates";
@@ -98,6 +99,41 @@ export async function fetchSalleServer(id: number): Promise<SalleDetail> {
 /** Client Components */
 export async function fetchSalleClient(id: number): Promise<SalleDetail> {
   return apiFetch<SalleDetail>(`/salles/${id}/`, { cache: "no-store" });
+}
+
+async function fetchDisponibiliteFromApi(
+  salleId: number,
+  range: DateRange,
+  init?: RequestInit,
+): Promise<SalleDisponibilite> {
+  const { date_debut, date_fin } = rangeToApiParams(range);
+  const params = new URLSearchParams({ date_debut, date_fin });
+  const res = await fetch(
+    `${API_URL}/salles/${salleId}/disponibilite/?${params}`,
+    init,
+  );
+
+  if (!res.ok) {
+    throw new Error(`Erreur disponibilité (${res.status})`);
+  }
+
+  return res.json() as Promise<SalleDisponibilite>;
+}
+
+/** Server Components */
+export async function fetchSalleDisponibiliteServer(
+  salleId: number,
+  range: DateRange,
+): Promise<SalleDisponibilite> {
+  return fetchDisponibiliteFromApi(salleId, range, { next: { revalidate: 0 } });
+}
+
+/** Client Components */
+export async function fetchSalleDisponibiliteClient(
+  salleId: number,
+  range: DateRange,
+): Promise<SalleDisponibilite> {
+  return fetchDisponibiliteFromApi(salleId, range, { cache: "no-store" });
 }
 
 export interface CreateReservationResult {
