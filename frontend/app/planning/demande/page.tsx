@@ -44,7 +44,6 @@ export default async function DemandePage({ searchParams }: DemandePageProps) {
 
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
         <section className="space-y-3">
-          <p className="text-muted-foreground text-sm">Étape 3 — Demande</p>
           <h1 className="font-semibold text-[1.75rem] text-foreground leading-tight tracking-[-0.03em] text-balance md:text-[2rem]">
             Déposer une demande de réservation
           </h1>

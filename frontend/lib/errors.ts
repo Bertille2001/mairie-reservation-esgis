@@ -48,3 +48,6 @@ export function firstFieldError(
 ): string | undefined {
   return fieldErrors[field]?.[0];
 }
+
+export const PLANNING_LOAD_ERROR =
+  "Impossible de charger les disponibilités. Vérifiez votre connexion et réessayez dans quelques instants.";

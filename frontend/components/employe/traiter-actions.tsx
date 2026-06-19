@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { traiterDemande } from "@/lib/api-auth";
 import { firstFieldError, type ApiFieldErrors } from "@/lib/errors";
+import { showErrorToast, showSuccessToast } from "@/lib/ui-toast";
 import type { DemandeReservation } from "@/lib/types";
 
 interface TraiterActionsProps {
@@ -58,12 +59,17 @@ export function TraiterActions({ demande, onTraite }: TraiterActionsProps) {
     if (result.error) {
       setError(result.error.generalError);
       setFieldErrors(result.error.fieldErrors);
+      showErrorToast("Action impossible", result.error.generalError);
       setLoading(false);
       return;
     }
 
     if (result.data) {
       onTraite(result.data);
+      showSuccessToast(
+        "Demande acceptée",
+        "Redirection vers le suivi clés et paiement.",
+      );
       router.push(`/employe/reservations/${demande.id}`);
     }
     setLoading(false);
@@ -88,12 +94,17 @@ export function TraiterActions({ demande, onTraite }: TraiterActionsProps) {
     if (result.error) {
       setError(result.error.generalError);
       setFieldErrors(result.error.fieldErrors);
+      showErrorToast("Action impossible", result.error.generalError);
       setLoading(false);
       return;
     }
 
     if (result.data) {
       onTraite(result.data);
+      showSuccessToast(
+        "Demande refusée",
+        "Le demandeur sera informé par e-mail.",
+      );
       setMode("idle");
     }
     setLoading(false);

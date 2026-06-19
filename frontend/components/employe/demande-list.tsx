@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Filter } from "lucide-react";
+import { Filter, Inbox } from "lucide-react";
 
 import { DemandeListRow } from "@/components/employe/demande-list-row";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AuthError, fetchReservations } from "@/lib/api-auth";
 import { clearTokens } from "@/lib/auth";
@@ -141,14 +142,15 @@ export function DemandeList({ initialStatut = "en_attente" }: DemandeListProps) 
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-border/60 bg-surface-elevated px-6 py-14 text-center shadow-panel">
-          <p className="font-medium text-foreground text-sm">Aucune demande</p>
-          <p className="mt-1 text-muted-foreground text-sm">
-            {statut === "en_attente"
+        <EmptyState
+          icon={Inbox}
+          title="Aucune demande"
+          description={
+            statut === "en_attente"
               ? "Aucune demande en attente de traitement pour le moment."
-              : "Aucun résultat pour ces filtres."}
-          </p>
-        </div>
+              : "Aucun résultat pour ces filtres."
+          }
+        />
       ) : (
         <div className="overflow-hidden rounded-xl border border-border/60 bg-surface-elevated shadow-panel">
           {filtered.map((demande, index) => (

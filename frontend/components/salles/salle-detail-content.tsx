@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, KeyRound, MapPin } from "lucide-react";
+import { ArrowLeft, KeyRound, MapPin } from "lucide-react";
 
 import { SalleSlotSummary } from "@/components/salles/salle-slot-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { buildDemandeUrl } from "@/lib/api";
+import { buildPlanningUrl } from "@/lib/api";
 import { formatCapacite, formatPrice, formatSurface } from "@/lib/format";
 import type { DateRange, SalleDetail } from "@/lib/types";
 
@@ -40,8 +39,7 @@ export function SalleDetailContent({
   estLibreSurCreneau = null,
 }: SalleDetailContentProps) {
   const fromPlanning = slotRange !== null;
-  const demandeUrl = buildDemandeUrl(salle.id);
-  const backHref = fromPlanning ? "/" : "/salles";
+  const backHref = fromPlanning && slotRange ? buildPlanningUrl(slotRange) : fromPlanning ? "/" : "/salles";
   const backLabel = fromPlanning ? "Retour au planning" : "Toutes les salles";
 
   return (
@@ -82,7 +80,6 @@ export function SalleDetailContent({
 
       {fromPlanning && slotRange && (
         <SalleSlotSummary
-          salleId={salle.id}
           slotRange={slotRange}
           estLibre={estLibreSurCreneau}
         />
@@ -173,26 +170,6 @@ export function SalleDetailContent({
           </ul>
         )}
       </section>
-
-      {!fromPlanning && (
-        <>
-          <Separator />
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-md text-muted-foreground text-sm">
-              Déposez une demande de réservation. Un agent municipal la traitera
-              sous quelques jours ouvrés.
-            </p>
-            <Button
-              render={<Link href={demandeUrl} />}
-              size="lg"
-              className="min-h-11 w-full rounded-lg sm:w-auto"
-            >
-              Réserver cette salle
-              <ArrowRight aria-hidden />
-            </Button>
-          </div>
-        </>
-      )}
     </div>
   );
 }

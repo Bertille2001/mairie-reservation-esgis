@@ -58,6 +58,13 @@ export async function fetchPlanningClient(
   return fetchPlanningFromApi(range, { cache: "no-store" });
 }
 
+export function buildPlanningUrl(range?: DateRange): string {
+  if (!range) return "/";
+  const { date_debut, date_fin } = rangeToApiParams(range);
+  const params = new URLSearchParams({ debut: date_debut, fin: date_fin });
+  return `/?${params}`;
+}
+
 export function buildDemandeUrl(
   salleId: number,
   range?: DateRange,

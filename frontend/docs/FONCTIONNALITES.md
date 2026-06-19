@@ -60,8 +60,8 @@ Application web en **3 espaces** :
 | `/employe/reservations` | À faire | Employé | Réservations acceptées |
 | `/employe/reservations/[id]` | À faire | Employé | Détail + suivi clés/paiement |
 | `/employe/salles/nouvelle` | À faire | Employé | Création salle (optionnel phase 2) |
-| `/gardien` | À faire | Gardien | Planning mono-salle |
-| `/gardien/reservations/[id]` | À faire | Gardien | Suivi clés |
+| `/gardien` | ✅ Fait | Gardien | Liste réservations acceptées de sa salle |
+| `/gardien/reservations/[id]` | ✅ Fait | Gardien | Suivi remise/restitution clés |
 
 ---
 
@@ -148,16 +148,23 @@ Application web en **3 espaces** :
 - Enregistrer restitution des clés
 - Signaler retard → e-mail rappel (backend)
 
-### `/gardien` — Planning salle
-**API :** `GET /reservations/list/?statut=acceptee` (filtré côté front ou API sur salle du gardien)
+### `/gardien` — Réservations de la salle ✅
 
-- Planning **une seule salle** (celle assignée au gardien)
-- Liste réservations à venir avec actions clés
+**API :** `GET /utilisateurs/me/`, `GET /reservations/list/?statut=acceptee`, `GET /reservations/{id}/suivi/`
 
-### `/gardien/reservations/[id]`
+- Liste filtrée par la salle assignée au gardien (côté API)
+- Filtres : À venir / Aujourd'hui / Toutes
+- Badge statut clés (remise à faire, en cours, retard, terminé)
+- Alerte si restitutions en retard
+- Clic → `/gardien/reservations/[id]`
+
+### `/gardien/reservations/[id]` — Suivi clés ✅
+
 **API :** `GET /reservations/{id}/suivi/`, `PATCH /reservations/{id}/suivi/`
 
-- Même suivi clés que l'employé, limité à sa salle
+- Remise et restitution des clés (sans section paiement)
+- Signalement explicite d'un retard de restitution
+- Toasts de confirmation et d'erreur
 
 ---
 
@@ -203,9 +210,9 @@ Application web en **3 espaces** :
 6. `/employe/reservations/[id]` — suivi clés
 
 ### Phase 3 — Gardien & finitions
-7. `/gardien` + `/gardien/reservations/[id]`
-8. Empty states, toasts erreurs, responsive borne hall
-9. Tests E2E parcours complet
+7. `/gardien` + `/gardien/reservations/[id]` ✅
+8. Empty states, toasts erreurs, responsive borne hall ✅
+9. Tests E2E parcours complet (à faire)
 
 ---
 

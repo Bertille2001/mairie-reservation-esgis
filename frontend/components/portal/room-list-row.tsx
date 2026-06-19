@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-import { buildSalleUrl } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { buildDemandeUrl, buildSalleUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { DateRange, SallePlanning } from "@/lib/types";
 
@@ -15,7 +16,7 @@ function StatusIndicator({ libre }: { libre: boolean }) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center gap-1.5 text-xs font-medium max-sm:sr-only",
+        "flex shrink-0 items-center gap-1.5 text-xs font-medium",
         libre ? "text-success-fg" : "text-planning-occupe-fg",
       )}
     >
@@ -33,25 +34,44 @@ function StatusIndicator({ libre }: { libre: boolean }) {
 
 export function RoomListRow({ salle, range, isLast }: RoomListRowProps) {
   const libre = salle.est_libre;
-  const href = buildSalleUrl(salle.id, range);
-  const actionLabel = "Voir la fiche salle";
+  const salleUrl = buildSalleUrl(salle.id, range);
+  const demandeUrl = buildDemandeUrl(salle.id, range);
 
   return (
     <>
-      <Link
-        href={href}
-        className="group flex min-h-[52px] items-center gap-2 px-4 py-3.5 transition-colors hover:bg-accent/40 active:bg-accent/60 focus-visible:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 sm:gap-3"
-        aria-label={`${salle.nom} — ${libre ? "Libre" : "Occupé"} — ${actionLabel}`}
+      <div
+        className={cn(
+          "flex min-h-[52px] flex-wrap items-center gap-x-2 gap-y-2 px-4 py-3.5 sm:flex-nowrap sm:gap-3",
+          libre
+            ? "border-l-2 border-l-success/50 bg-success/4"
+            : "border-l-2 border-l-planning-occupe/50 bg-planning-occupe/30",
+        )}
       >
-        <span className="min-w-0 flex-1 truncate font-medium text-[0.9375rem] text-foreground">
+        <Link
+          href={salleUrl}
+          className="min-w-0 flex-1 truncate font-medium text-[0.9375rem] text-foreground hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+        >
           {salle.nom}
-        </span>
+        </Link>
         <StatusIndicator libre={libre} />
-        <ChevronRight
-          className="size-4 shrink-0 text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-muted-foreground"
-          aria-hidden
-        />
-      </Link>
+        {libre ? (
+          <Button
+            render={<Link href={demandeUrl} />}
+            size="sm"
+            className="min-h-9 shrink-0 rounded-lg"
+          >
+            Réserver
+          </Button>
+        ) : (
+          <Link
+            href={salleUrl}
+            className="flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-accent/40 hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+            aria-label={`Voir la fiche de ${salle.nom}`}
+          >
+            <ChevronRight className="size-4" aria-hidden />
+          </Link>
+        )}
+      </div>
       {!isLast && <div className="mx-4 border-b border-border/50" aria-hidden />}
     </>
   );

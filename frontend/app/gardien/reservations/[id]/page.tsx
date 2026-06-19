@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { SuiviPanel } from "@/components/employe/suivi-panel";
 
 export const metadata = {
-  title: "Suivi des clés — Espace employé",
+  title: "Suivi des clés — Espace gardien",
 };
 
-export default async function ReservationSuiviPage({
+export default async function GardienReservationPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -18,5 +18,5 @@ export default async function ReservationSuiviPage({
     notFound();
   }
 
-  return <SuiviPanel id={reservationId} />;
+  return <SuiviPanel id={reservationId} variant="gardien" />;
 }

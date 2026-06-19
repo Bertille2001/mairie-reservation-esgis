@@ -9,6 +9,7 @@ import { TimeRangeFields } from "@/components/portal/time-range-fields";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
+  buildPlanningUrl,
   createReservationClient,
   DEMANDE_CONFIRMATION_KEY,
   fetchSalleClient,
@@ -237,17 +238,19 @@ export function DemandeForm({
     }));
   };
 
+  const backHref = slotLocked ? buildPlanningUrl(slotRange) : "/";
+
   return (
     <form className="flex flex-col gap-8" onSubmit={handleSubmit} noValidate>
       <Button
-        render={<Link href={slotLocked && typeof salleId === "number" ? `/salles/${salleId}` : "/"} />}
+        render={<Link href={backHref} />}
         variant="ghost"
         size="sm"
         className="-ml-2 min-h-11 w-fit rounded-lg"
         type="button"
       >
         <ArrowLeft aria-hidden />
-        {slotLocked ? "Retour à la fiche salle" : "Retour au planning"}
+        Retour au planning
       </Button>
 
       {generalError && (

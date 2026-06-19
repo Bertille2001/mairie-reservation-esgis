@@ -1,9 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { fetchPlanningClient } from "@/lib/api";
-import { isRangeTimeValid, parseDateRange, type SerializedDateRange } from "@/lib/dates";
+import {
+  isRangeTimeValid,
+  parseDateRange,
+  rangeToApiParams,
+  type SerializedDateRange,
+} from "@/lib/dates";
+import { PLANNING_LOAD_ERROR } from "@/lib/errors";
 import type { DateRange, SallePlanning } from "@/lib/types";
 
 import { DateRangeCalendar } from "./date-range-calendar";
@@ -20,13 +27,15 @@ export function PlanningWorkspace({
   initialError,
   initialRange,
 }: PlanningWorkspaceProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [range, setRange] = useState<DateRange>(() =>
     parseDateRange(initialRange),
   );
   const [salles, setSalles] = useState<SallePlanning[]>(initialSalles);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(initialError);
-  const isMount = useRef(true);
+  const skipInitialFetch = useRef(true);
 
   const loadPlanning = useCallback(async (currentRange: DateRange) => {
     setLoading(true);
@@ -34,21 +43,17 @@ export function PlanningWorkspace({
     try {
       const data = await fetchPlanningClient(currentRange);
       setSalles(data);
-    } catch (err) {
+    } catch {
       setSalles([]);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Vérifiez que le serveur backend est démarré.",
-      );
+      setError(PLANNING_LOAD_ERROR);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (isMount.current) {
-      isMount.current = false;
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false;
       return;
     }
 
@@ -56,11 +61,19 @@ export function PlanningWorkspace({
       return;
     }
 
+    const { date_debut, date_fin } = rangeToApiParams(range);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("debut") !== date_debut || params.get("fin") !== date_fin) {
+      params.set("debut", date_debut);
+      params.set("fin", date_fin);
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+
     const timer = setTimeout(() => {
       void loadPlanning(range);
     }, 300);
     return () => clearTimeout(timer);
-  }, [range, loadPlanning]);
+  }, [range, loadPlanning, pathname, router]);
 
   return (
     <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-10">

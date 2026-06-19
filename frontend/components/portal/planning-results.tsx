@@ -5,6 +5,7 @@ import { AlertCircle, CalendarX2, Search } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { formatRangeLabel } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import type { DateRange, SallePlanning } from "@/lib/types";
@@ -89,6 +90,10 @@ export function PlanningResults({
   const [filter, setFilter] = useState<FilterTab>("all");
   const [search, setSearch] = useState("");
 
+  const isInitialLoad = loading && salles.length === 0;
+  const isRefreshing = loading && salles.length > 0;
+  const hasSalles = salles.length > 0;
+
   const counts = useMemo(
     () => ({
       all: salles.length,
@@ -114,12 +119,20 @@ export function PlanningResults({
   return (
     <div className="flex flex-col gap-5" aria-live="polite">
       <div className="space-y-1">
-        <h2 className="font-semibold text-lg text-foreground tracking-[-0.02em]">
-          Disponibilité des salles
-        </h2>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h2 className="font-semibold text-lg text-foreground tracking-[-0.02em]">
+            Disponibilité des salles
+          </h2>
+          {isRefreshing && (
+            <span className="inline-flex items-center gap-1.5 text-muted-foreground text-xs">
+              <Spinner className="size-3" aria-hidden />
+              Mise à jour…
+            </span>
+          )}
+        </div>
         <p className="break-words text-muted-foreground text-sm">
           {formatRangeLabel(range)}
-          {!loading && !error && salles.length > 0 && (
+          {!isInitialLoad && !error && hasSalles && (
             <span className="text-foreground">
               {" "}
               · {libres} libre{libres > 1 ? "s" : ""} sur {salles.length}
@@ -128,7 +141,7 @@ export function PlanningResults({
         </p>
       </div>
 
-      {!loading && !error && salles.length > 0 && (
+      {hasSalles && !error && (
         <div className="flex flex-col gap-3">
           <SegmentedControl
             value={filter}
@@ -152,7 +165,7 @@ export function PlanningResults({
         </div>
       )}
 
-      {loading && <PlanningSkeleton />}
+      {isInitialLoad && <PlanningSkeleton />}
 
       {!loading && error && (
         <Alert variant="error" className="rounded-xl">
@@ -178,7 +191,7 @@ export function PlanningResults({
         </div>
       )}
 
-      {!loading && !error && salles.length > 0 && filtered.length === 0 && (
+      {!error && hasSalles && filtered.length === 0 && !isInitialLoad && (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-border/60 bg-surface-elevated px-6 py-14 text-center shadow-panel">
           <Search
             className="size-8 text-muted-foreground"
@@ -194,8 +207,13 @@ export function PlanningResults({
         </div>
       )}
 
-      {!loading && !error && filtered.length > 0 && (
-        <div className="max-h-[min(70vh,640px)] overflow-hidden overflow-y-auto rounded-xl border border-border/60 bg-surface-elevated shadow-panel">
+      {!error && filtered.length > 0 && (
+        <div
+          className={cn(
+            "overflow-hidden rounded-xl border border-border/60 bg-surface-elevated shadow-panel sm:max-h-[min(70vh,640px)] sm:overflow-y-auto",
+            isRefreshing && "opacity-70 transition-opacity",
+          )}
+        >
           {filtered.map((salle, index) => (
             <RoomListRow
               key={salle.id}
