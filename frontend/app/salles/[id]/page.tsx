@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PortalFooter } from "@/components/portal/portal-footer";
 import { PortalHeader } from "@/components/portal/portal-header";
 import { SalleDetailContent } from "@/components/salles/salle-detail-content";
-import { fetchPlanningServer, fetchSalleServer } from "@/lib/api";
+import { fetchSalleDisponibiliteServer, fetchSalleServer } from "@/lib/api";
 import { parseQueryDateRange } from "@/lib/dates";
 
 interface SallePageProps {
@@ -51,9 +51,8 @@ export default async function SalleDetailPage({
 
   if (slotRange) {
     try {
-      const planning = await fetchPlanningServer(slotRange);
-      const entry = planning.find((item) => item.id === salleId);
-      estLibreSurCreneau = entry?.est_libre ?? null;
+      const disponibilite = await fetchSalleDisponibiliteServer(salleId, slotRange);
+      estLibreSurCreneau = disponibilite.est_libre;
     } catch {
       estLibreSurCreneau = null;
     }

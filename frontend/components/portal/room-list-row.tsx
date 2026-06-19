@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { buildDemandeUrl, buildSalleUrl } from "@/lib/api";
+import { formatCapacite, formatSurface } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { DateRange, SallePlanning } from "@/lib/types";
 
@@ -32,6 +34,17 @@ function StatusIndicator({ libre }: { libre: boolean }) {
   );
 }
 
+function PayantBadge({ estPayante }: { estPayante: boolean }) {
+  return (
+    <Badge
+      variant={estPayante ? "outline" : "secondary"}
+      className="text-xs"
+    >
+      {estPayante ? "Payant" : "Gratuit"}
+    </Badge>
+  );
+}
+
 export function RoomListRow({ salle, range, isLast }: RoomListRowProps) {
   const libre = salle.est_libre;
   const salleUrl = buildSalleUrl(salle.id, range);
@@ -41,18 +54,29 @@ export function RoomListRow({ salle, range, isLast }: RoomListRowProps) {
     <>
       <div
         className={cn(
-          "flex min-h-[52px] flex-wrap items-center gap-x-2 gap-y-2 px-4 py-3.5 sm:flex-nowrap sm:gap-3",
+          "flex items-center gap-x-3 gap-y-2 px-4 py-3.5",
           libre
             ? "border-l-2 border-l-success/50 bg-success/4"
             : "border-l-2 border-l-planning-occupe/50 bg-planning-occupe/30",
         )}
       >
-        <Link
-          href={salleUrl}
-          className="min-w-0 flex-1 truncate font-medium text-[0.9375rem] text-foreground hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-        >
-          {salle.nom}
-        </Link>
+        <div className="min-w-0 flex-1 space-y-1">
+          <Link
+            href={salleUrl}
+            className="block truncate font-medium text-[0.9375rem] text-foreground hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+          >
+            {salle.nom}
+          </Link>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-muted-foreground text-xs">
+              {formatSurface(salle.surface_m2)}
+            </span>
+            <span className="text-muted-foreground text-xs">
+              {formatCapacite(salle.capacite_min, salle.capacite_max)}
+            </span>
+            <PayantBadge estPayante={salle.est_payante} />
+          </div>
+        </div>
         <StatusIndicator libre={libre} />
         {libre ? (
           <Button

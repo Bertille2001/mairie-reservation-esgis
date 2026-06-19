@@ -33,9 +33,16 @@ function PlanningSkeleton() {
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i}>
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <Skeleton className="h-4 flex-1" />
+            <div className="flex flex-1 flex-col gap-1.5">
+              <Skeleton className="h-4 w-2/3" />
+              <div className="flex flex-wrap items-center gap-2">
+                <Skeleton className="h-3 w-14" />
+                <Skeleton className="h-3 w-28" />
+                <Skeleton className="h-5 w-14 rounded-full" />
+              </div>
+            </div>
             <Skeleton className="h-4 w-14" />
-            <Skeleton className="size-4 rounded-sm" />
+            <Skeleton className="h-9 w-20 rounded-lg" />
           </div>
           {i < 7 && <div className="mx-4 border-b border-border/50" />}
         </div>
