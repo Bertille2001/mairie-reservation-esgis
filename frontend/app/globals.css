@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -47,6 +49,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface-grouped: var(--surface-grouped);
+  --color-surface-elevated: var(--surface-elevated);
+  --shadow-panel: 0 1px 2px oklch(0 0 0 / 0.04), 0 4px 12px oklch(0 0 0 / 0.04);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -61,11 +66,17 @@
   --color-info-foreground: var(--info-foreground);
   --color-info: var(--info);
   --color-destructive-foreground: var(--destructive-foreground);
+  --animate-skeleton: skeleton 2s -1s infinite linear;
+  @keyframes skeleton {
+  to {
+    background-position: -200% 0;
+    }
+  }
 }
 
 :root {
   /* Mairie Lomé — bleu administratif (voir DESIGN.md) */
-  --background: oklch(1 0 0);
+  --background: oklch(0.975 0.004 250);
   --foreground: oklch(0.21 0.008 250);
   --card: oklch(0.985 0.004 250);
   --card-foreground: oklch(0.21 0.008 250);
@@ -89,7 +100,11 @@
   --chart-3: oklch(0.55 0.22 25);
   --chart-4: oklch(0.48 0.14 145);
   --chart-5: oklch(0.42 0.1 85);
-  --radius: 0.375rem;
+  --radius: 0.625rem;
+  --radius-panel: 0.875rem;
+  --radius-control: 0.5rem;
+  --surface-grouped: oklch(0.97 0.004 250);
+  --surface-elevated: oklch(1 0 0);
   --sidebar: oklch(0.985 0.004 250);
   --sidebar-foreground: oklch(0.21 0.008 250);
   --sidebar-primary: oklch(0.45 0.12 250);

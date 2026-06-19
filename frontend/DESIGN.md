@@ -162,11 +162,21 @@ Règle texte sur fond saturé : **texte blanc** sur `--primary` et `--destructiv
 
 ## Elevation
 
-Approche **plate** — pas de shadow-md/lg. Hiérarchie par bordure 1px (`--border`) et léger contraste de surface (`--card` vs `--background`).
+Approche **grouped moderée** — panneaux blancs sur fond légèrement grisé, coins arrondis discrets (pas pill), ombre légère.
 
-- Hover carte : `border-color` légèrement assombri, pas de box-shadow.
-- Dropdowns / popovers : bordure 1px + ombre unique `0 4px 12px oklch(0 0 0 / 0.06)` si nécessaire.
-- Pas de glassmorphism, pas de gradients décoratifs.
+| Token | Valeur | Usage |
+|-------|--------|-------|
+| `--background` | `oklch(0.975 0.004 250)` | Fond page (gris très léger) |
+| `--surface-elevated` | `oklch(1 0 0)` | Panneaux, listes groupées |
+| `--surface-grouped` | `oklch(0.97 0.004 250)` | Fond interne (calendrier, inputs) |
+| `--shadow-panel` | diffuse légère | Panneaux `rounded-xl` |
+| `--radius` | `0.625rem` (10px) | Base — entre institutionnel (6px) et Apple exagéré (20px) |
+| `--radius-panel` | `0.875rem` (14px) | Panneaux principaux |
+
+- **Grouped list** : conteneur `rounded-xl border border-border/60`, lignes séparées par `border-b border-border/50`, ligne entière cliquable + chevron.
+- **Pas de cards individuelles** pour les listes homogènes (salles, demandes).
+- Segmented control : `bg-muted rounded-lg p-1`, segment actif `rounded-md`.
+- Inspiration Apple pour la structure (grouped, segmented), pas pour des radius extrêmes.
 
 ## Components
 

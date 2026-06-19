@@ -50,9 +50,11 @@ Ne jamais recréer un Button, Input, Dialog, etc. si coss le fournit. Vérifier 
 |-------|--------|-------|
 | `--primary` | `oklch(0.45 0.12 250)` | CTA, liens actifs, focus ring |
 | `--primary-foreground` | `oklch(0.99 0 0)` | Texte sur boutons remplis |
-| `--background` | `oklch(1 0 0)` | Fond page (blanc pur) |
-| `--foreground` | `oklch(0.21 0.008 145)` | Texte principal |
-| `--muted-foreground` | `oklch(0.45 0.015 145)` | Texte secondaire |
+| `--background` | `oklch(0.975 0.004 250)` | Fond page (gris très léger) |
+| `--foreground` | `oklch(0.21 0.008 250)` | Texte principal |
+| `--muted-foreground` | `oklch(0.45 0.016 250)` | Texte secondaire |
+| `--surface-elevated` | `oklch(1 0 0)` | Panneaux blancs |
+| `--surface-grouped` | `oklch(0.97 0.004 250)` | Fond interne (calendrier, inputs) |
 | `--destructive` | `oklch(0.55 0.22 25)` | Refus, erreurs bloquantes |
 
 **Sémantique métier** (classes Tailwind : `bg-planning-libre`, `bg-planning-occupe`, etc.) :
@@ -70,9 +72,18 @@ Utiliser les classes sémantiques Tailwind (`bg-primary`, `text-muted-foreground
 - UI entièrement en **français** ; `lang="fr"` sur `<html>`
 - Geist Sans pour tout le texte UI ; Geist Mono pour prix, horaires, références
 - Échelle fixe rem (pas de clamp fluide sur les titres)
-- `--radius: 0.375rem` (6px) — max 8px sur les cartes
-- Hiérarchie **plate** : bordures 1px, pas de `shadow-md` / `shadow-lg`
+- `--radius: 0.625rem` (10px) — panneaux `rounded-xl`, grouped list
+- Surfaces groupées + ombre légère `shadow-panel` (voir `DESIGN.md`)
 - Portail public (borne hall) : cibles tactiles ≥ 44×44 px
+
+## Architecture Next.js (App Router)
+
+- **Server Components par défaut** — `"use client"` uniquement sur les feuilles interactives (calendrier, filtres, formulaires)
+- **Fetch serveur** : `fetchPlanningServer()` avec `next: { revalidate: 0 }` dans les loaders async
+- **Fetch client** : `fetchPlanningClient()` avec `cache: 'no-store'` (changement de plage)
+- **`app/loading.tsx`** et **`app/error.tsx`** obligatoires à la racine
+- **`Suspense`** autour des loaders async (`PlanningBoardLoader`)
+- **`metadata` export** dans `layout.tsx` — pas de `<title>` hardcodé dans les pages
 
 ## Règles UX (cahier des charges)
 
