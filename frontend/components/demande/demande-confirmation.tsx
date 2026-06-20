@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useSyncExternalStore } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { useRef, useSyncExternalStore } from "react";
+import { ArrowRight, CheckCircle2, FileDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEMANDE_CONFIRMATION_KEY } from "@/lib/api";
+import { downloadDemandeReservationPdf } from "@/lib/demande-reservation-print";
 import { formatSlotLabel, parseQueryDateRange } from "@/lib/dates";
 import { formatPrice } from "@/lib/format";
+import { showErrorToast } from "@/lib/ui-toast";
 import type { DemandeReservation } from "@/lib/types";
 
 function DetailRow({ label, value }: { label: string; value: string }) {
@@ -58,6 +60,7 @@ export function DemandeConfirmation() {
   const searchParams = useSearchParams();
   const expectedId = searchParams.get("id");
   const isClient = useIsClient();
+  const isDownloadingRef = useRef(false);
 
   if (!isClient) {
     return <ConfirmationLoading />;
@@ -109,14 +112,40 @@ export function DemandeConfirmation() {
               à {demande.demandeur_email}.
             </p>
           </div>
-          <Button
-            render={<Link href="/" />}
-            size="lg"
-            className="min-h-11 w-full shrink-0 rounded-lg lg:w-auto"
-          >
-            Retour au planning
-            <ArrowRight aria-hidden />
-          </Button>
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:flex-row lg:w-auto">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="min-h-11 w-full rounded-lg sm:w-auto"
+              onClick={() => {
+                if (isDownloadingRef.current) return;
+                isDownloadingRef.current = true;
+
+                try {
+                  downloadDemandeReservationPdf(demande);
+                } catch {
+                  showErrorToast(
+                    "Impossible de générer le PDF",
+                    "Réessayez dans quelques instants.",
+                  );
+                } finally {
+                  isDownloadingRef.current = false;
+                }
+              }}
+            >
+              <FileDown aria-hidden />
+              Télécharger le PDF
+            </Button>
+            <Button
+              render={<Link href="/" />}
+              size="lg"
+              className="min-h-11 w-full rounded-lg sm:w-auto"
+            >
+              Retour au planning
+              <ArrowRight aria-hidden />
+            </Button>
+          </div>
         </div>
       </section>
 
